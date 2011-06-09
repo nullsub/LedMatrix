@@ -1,0 +1,6 @@
+*.swn
+*.sw*.swn
+*.swo
+*.swp
+tags
+build/*
