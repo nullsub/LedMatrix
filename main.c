@@ -1,7 +1,9 @@
 
 #include "uart.h"
 #include "led_matrix.h"
+#include "shift_register.h"
 #include <stdlib.h>
+#include <inttypes.h>
 
 void parse_cmd(char *cmd);
 int strcmp(char *str1, char *str2);
@@ -47,7 +49,8 @@ int main(){
 
 
 
-void parse_cmd(char *cmd){
+void parse_cmd(char *cmd)
+{
 	char command[MAX_CMD_LENGTH];
 	char args[MAX_CMD_LENGTH];
 	char an_arg[MAX_CMD_LENGTH];
@@ -69,10 +72,18 @@ void parse_cmd(char *cmd){
 	args[index-tmp] = 0x00;
 
 	arg_pointer = get_nxt_word(args+1, an_arg);	
-	
-	if(!strcmp(command, "setpixels")){
-		for(int i = 0; i< SIZE_Y;i++){
-			led_matrix_set_pixel(i,i,1);
+
+	if(!strcmp(command, "clearpixels")){
+		for(int i = 0; i < SIZE_Y; i++){
+			for(int j = 0; j < SIZE_X; j++) {
+				led_matrix_set_pixel(j,i,0);
+			}
+		}
+	}if(!strcmp(command, "setpixels")){
+		for(int i = 0; i < SIZE_Y; i++){
+			for(int j = 0; j < SIZE_X; j++) {
+				led_matrix_set_pixel(j,i,1);
+			}
 		}
 	}
 
@@ -92,13 +103,17 @@ void parse_cmd(char *cmd){
 		uart_puts("resetting...\n");
 		__asm("rjmp 0x0000");
 	}
-	
+
 	if(!strcmp(command, "help")){
-		uart_puts("\navailable commands:\n\twrite_str\twrite string arg2 to adress arg1\n\tread_str\tread string from arg1 adress\n\twrite\t\twrite hexbytes from arg2 to adress arg1\n\tread\t\tread arg2 hexbytes from arg1\n");
+		uart_puts("\navailable commands:"
+				"\n\tsetpixels\t\tset all pixels\n"
+				"\n\tclearpixels\t\tclear all pixels\n"
+				"n\treset\t\treset the controller\n");
 	}
 }
 
-char *get_nxt_word(char *str, char* word){
+char *get_nxt_word(char *str, char* word)
+{
 	int index;
 	for(index = 0;*(str+sizeof(char)*index) != 0x00 && *(str+sizeof(char)*index) != ' ' && index < MAX_CMD_LENGTH; index += sizeof(char)){
 		word[index] = *(str+sizeof(char)*index);
@@ -107,7 +122,8 @@ char *get_nxt_word(char *str, char* word){
 	return (char*)str+sizeof(char)*(index+1);
 }
 
-int strcmp(char *str1, char *str2){
+int strcmp(char *str1, char *str2)
+{
 	while(*str1 == *str2){		
 		if(*str1 == 0x00) return 0;
 		str1++;

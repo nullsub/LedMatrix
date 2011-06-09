@@ -1,9 +1,7 @@
 #ifndef LED_MATRIX_H
 #define LED_MATRIX_H
 
-#include "shift_register.h"
-#include <avr/interrupt.h>
-#include <avr/io.h>
+#include <inttypes.h>
 
 #define SIZE_X 16
 #define SIZE_Y 16

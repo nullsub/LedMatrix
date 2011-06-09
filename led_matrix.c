@@ -1,11 +1,13 @@
 
+#include <avr/interrupt.h>
+#include <avr/io.h>
+
 #include "led_matrix.h"
-
-
+#include "shift_register.h"
 
 ISR (TIMER1_COMPA_vect)
 {
-	int8_t static crrnt_collumn = 0;
+	static int8_t crrnt_collumn = 0;
 	register_state[LINE_REG1] =0xFF; //led_matrix_framebffr[(crrnt_collumn*SIZE_Y)/8];
 	register_state[LINE_REG2] = 0xFF;//led_matrix_framebffr[((crrnt_collumn*SIZE_Y)/8)+1];
 	if(crrnt_collumn < 8){
@@ -44,9 +46,6 @@ void led_matrix_init()
 	WDTCR |= (1<<WDP0)|(1<<WDP1)|(1<<WDE); //enable watchdog approximatily every 12ms
 */
   	sei();
-
-	
-
 }
  
 

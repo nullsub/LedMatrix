@@ -3,19 +3,19 @@
 
 #include "shift_register.h"
 
-
-
-void shift_init(){// define shift-register pins as output
+void shift_init()
+{		// define shift-register pins as output
 	SHIFT_DDR |= (1<<SHIFT_RCK) | (1<<SHIFT_SCK)| (1<<SHIFT_SER)|(1<<SHIFT_NOT_ENABLE)/* | (1<<SHIFT_SCL) */;
 	SHIFT_PORT &= ~((1<<SHIFT_RCK) | (1<<SHIFT_SCK) | (1<<SHIFT_SER)|(1<<SHIFT_NOT_ENABLE)/*| (1<<SHIFT_SCL)*/ );
 	/*SHIFT_PORT |= (1<<SHIFT_SCL);*/
-	
+
 	shift_output_disable();
 
 	return;
 }
 
-void shift_out(){
+void shift_out()
+{
 	unsigned char Temp,out_byte;
 	int bit_counter, register_cnt;
 
@@ -23,7 +23,7 @@ void shift_out(){
 		out_byte = register_state[(NR_OF_REGISTERS-1)-register_cnt];
 		for(bit_counter = 0; bit_counter < BITS_TO_SHIFT; bit_counter ++){
 			Temp = (out_byte & 0b10000000);  
-        		if(Temp  != 0){
+			if(Temp  != 0){
 				SHIFT_PORT |= (1<<SHIFT_SER);  
 			}
 			else{
@@ -44,15 +44,13 @@ void shift_out(){
 
 	SHIFT_PORT &= ~(1<<SHIFT_RCK); 
 
-
 	return;
 }
 
-
-void shift_output_disable(){
+void shift_output_disable()
+{
 	SHIFT_DDR  |= (1<<SHIFT_NOT_ENABLE);
 	SHIFT_PORT |= (1<<SHIFT_NOT_ENABLE);
 }
-
 
 #endif//SHIFT_REGISTER_C
