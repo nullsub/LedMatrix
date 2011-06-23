@@ -37,6 +37,9 @@ INCLUDES= \
 
 CFILES= \
 	main.c \
+	pong.c \
+	conway.c \
+	go.c \
 	led_matrix.c \
 	uart.c \
 	shift_register.c \
@@ -54,7 +57,7 @@ build/$(TARGET).elf: $(OFILES)
 	$(CC) $(LDFLAGS) $(LIBDIRS) $(LIBS) $(OFILES) -o build/$(TARGET).elf  
 	avr-objcopy -O ihex $(HEX_FLASH_FLAGS) build/$(TARGET).elf build/$(TARGET).hex
 	avr-objcopy $(HEX_EEPROM_FLAGS) -O ihex build/$(TARGET).elf build/$(TARGET).eep
-#	avr-objdump -h -S $< > $@
+	avr-objdump -d -S build/$(TARGET).elf >  build/$(TARGET).lss
 	@avr-size -C --mcu=${MCU} build/$(TARGET).elf
 
 build/%.o : %.c
@@ -66,7 +69,8 @@ build/%.o : %.S
 build/%.o : %.asm 
 	$(CC) -c $(CFLAGS) $(INCLUDES) -O2 $< -o $@
 
-
+flash: all
+	avrdude -c avrisp2 -p m8 -P usb -F -v -B10 -U flash:w:build/Matrix16x16.hex:a	
 
 ## Clean target
 clean:
