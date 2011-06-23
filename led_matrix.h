@@ -11,9 +11,9 @@
 #define LINE_REG1    2	
 #define LINE_REG2    3
 
-int8_t led_matrix_framebffr[(SIZE_X * SIZE_Y)/8];
-
 void led_matrix_init();
 void led_matrix_set_pixel(uint8_t x, uint8_t y, int8_t val);
+int8_t * led_matrix_set_fb(int8_t *new_fb); //returns old_fb
+void reset_fb();
 
 #endif

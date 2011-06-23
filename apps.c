@@ -1,24 +1,43 @@
+#include <avr/interrupt.h>
+#include <avr/io.h>
+
 #include "apps.h"
 
-static volatile tick;
+static volatile uint8_t tick; 
 
 void apps_init()
 {
- 	// config the timer every 100ms
-	TCCR2 |= (1<<WGM21)|(1<<CS22)|(CS21)|(1<<CS20);	 //CTC, prescaler 1024
-	OCR2 = 123; // ((0.1/(1/F_CPU))/PRESCALER)-1
-	TIMSK |= (1<<OCIE2); 
-	
+ 	 // Use 16 Bit Timer1 to create a tick every 100ms
+
+  	TCCR1B = (1<<WGM12); 
+
+/*		((NeededTime/(1/F_CPU))/PRESCALER)-1 	*/
+/*		((0.1/(1/F_CPU))/1024)-1 = 780 		*/
+ 	OCR1A = 780; //16bit register
+
+	TCNT1 = 0; //16bit register
+ 	TIMSK |= (1<<OCIE1A); // enable INT
+
+	/* The Timer still needs to be started! (app_start_tick())*/		
 }
 
 void app_start_tick()
 {
-	
+  	TCCR1B |= ((1<<CS12)|(1<<CS10)); // Prescaler 1024
 }
 
 void app_stop_tick()
 {
+ 	TIMSK &= ~(1<<OCIE1A); // disable
+  	TCCR1B &= ~((1<<CS12)|(1<<CS10)); 	//stop counter
+}
 
+void apps_dec_tick()
+{
+	cli();
+	if(tick)
+		tick --;
+	sei();
 }
 
 uint8_t apps_get_tick()
@@ -27,5 +46,10 @@ uint8_t apps_get_tick()
 	uint8_t tmp = tick;
 	sei();
 	return tmp;
+}
+
+ISR (TIMER1_COMPA_vect)
+{
+	tick ++;
 }
 
