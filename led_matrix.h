@@ -14,6 +14,6 @@
 int8_t led_matrix_framebffr[(SIZE_X * SIZE_Y)/8];
 
 void led_matrix_init();
-void led_matrix_set_pixel(int8_t x,int8_t y,int8_t val);
+void led_matrix_set_pixel(uint8_t x, uint8_t y, int8_t val);
 
 #endif

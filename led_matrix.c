@@ -8,19 +8,24 @@
 ISR (TIMER1_COMPA_vect)
 {
 	static int8_t crrnt_collumn = 0;
-	register_state[LINE_REG1] =0xFF; //led_matrix_framebffr[(crrnt_collumn*SIZE_Y)/8];
-	register_state[LINE_REG2] = 0xFF;//led_matrix_framebffr[((crrnt_collumn*SIZE_Y)/8)+1];
+	register_state[LINE_REG1] = 
+		led_matrix_framebffr[(crrnt_collumn*SIZE_Y)/8];
+	register_state[LINE_REG2] = 
+		led_matrix_framebffr[((crrnt_collumn*SIZE_Y)/8)+1];
 	if(crrnt_collumn < 8){
-		register_state[COLLUMN_REG1] = ~((int8_t)(0x01 << crrnt_collumn));
+		register_state[COLLUMN_REG1] = 
+			~((int8_t)(0x01 << crrnt_collumn));
 		register_state[COLLUMN_REG2] = ~0x00;
 	}
 	else{
-		register_state[COLLUMN_REG2] = ~((int8_t)(0x01 << (crrnt_collumn-8)));
+		register_state[COLLUMN_REG2] = 
+			~((int8_t)(0x01 << (crrnt_collumn-8)));
 		register_state[COLLUMN_REG1] = ~0x00;	
 	}
 	shift_out();	
 	crrnt_collumn ++;
-	if(crrnt_collumn >= 16) crrnt_collumn = 0;
+	if(crrnt_collumn >= 16) 
+		crrnt_collumn = 0;
 //	__asm("wdr"); // reset watchdog
 }
 
@@ -28,7 +33,6 @@ ISR (TIMER1_COMPA_vect)
 void led_matrix_init()
 {
 	shift_init();
-	  // Timer 0 konfigurieren
 	
 	DDRD |= (1<<2);
 	PORTD |= (1<<2);
@@ -49,22 +53,20 @@ void led_matrix_init()
 }
  
 
-void led_matrix_set_pixel(int8_t x, int8_t y, int8_t val)
+void led_matrix_set_pixel(uint8_t x, uint8_t y, int8_t val)
 {
-	int8_t xtmp = x;
+	int8_t bit_pos = x%8;
 
-	if(x < 0|| y < 0 || x >= SIZE_X || y >= SIZE_Y){
+	if(x >= SIZE_X || y >= SIZE_Y){
 		return;
 	}
 	
-	if(x > 7){
-		xtmp = x-8;
-	}
 	if(val == 1){
-		led_matrix_framebffr[((SIZE_Y*y)+x)/8] |= (1<<xtmp); // set bit
+		led_matrix_framebffr[((SIZE_Y*y)+x)/8] |= (1<<bit_pos); // set
 	}
 	else{
-		led_matrix_framebffr[((SIZE_Y*y)+x)/8] &= ~(1<<xtmp); //clear bit
+		led_matrix_framebffr[((SIZE_Y*y)+x)/8] &= ~(1<<bit_pos); //clear
+		
 	} 	
 }
 

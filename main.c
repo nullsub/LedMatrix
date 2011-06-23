@@ -28,8 +28,8 @@ int main(){
 					//uart_putc('\b');
 				}
 			}
-			else if(tmp == '\n'|| tmp == '\r' || i >= MAX_CMD_LENGTH){
-				//handle/parse command
+			else if(tmp == '\n'|| tmp == '\r' ||
+					 i >= MAX_CMD_LENGTH){
 				if(i != 0){
 					cmd_bffr[i] = 0x00;
 					parse_cmd(cmd_bffr);
@@ -61,12 +61,15 @@ void parse_cmd(char *cmd)
 	while(*cmd == ' '){
 		cmd ++;
 	}
-	for(index = 0; *(cmd+sizeof(char)*index) != ' ' && *(cmd+sizeof(char)*index) != 0x00 && index < MAX_CMD_LENGTH ; index ++){
+	for(index = 0; *(cmd+sizeof(char)*index) != ' ' && 
+		*(cmd+sizeof(char)*index) != 0x00 && 
+			index < MAX_CMD_LENGTH ; index ++) {
 		command[index] = *(cmd+sizeof(char)*index);
 	}
 	command[index] = 0x00;
 	tmp = index;
-	for(; *(cmd+sizeof(char)*index) != 0x00 && index < MAX_CMD_LENGTH; index ++){
+	for(; *(cmd+sizeof(char)*index) != 0x00 && 
+		index < MAX_CMD_LENGTH; index ++) {
 		args[index-tmp] = *(cmd+sizeof(char)*index);
 	}
 	args[index-tmp] = 0x00;
@@ -74,17 +77,19 @@ void parse_cmd(char *cmd)
 	arg_pointer = get_nxt_word(args+1, an_arg);	
 
 	if(!strcmp(command, "clearpixels")){
-		for(int i = 0; i < SIZE_Y; i++){
-			for(int j = 0; j < SIZE_X; j++) {
+		for(unsigned int i = 0; i < SIZE_Y; i++) {
+			for(unsigned int j = 0; j < SIZE_X; j++) {
 				led_matrix_set_pixel(j,i,0);
 			}
 		}
+		return;
 	}if(!strcmp(command, "setpixels")){
-		for(int i = 0; i < SIZE_Y; i++){
-			for(int j = 0; j < SIZE_X; j++) {
+		for(unsigned int i = 0; i < SIZE_Y; i++) {
+			for(unsigned int j = 0; j < SIZE_X; j++) {
 				led_matrix_set_pixel(j,i,1);
 			}
 		}
+		return;
 	}
 
 	if(!strcmp(command, "set")){
@@ -98,24 +103,35 @@ void parse_cmd(char *cmd)
 		register_state[2] = (int8_t) (collumn & 0xFF);
 		register_state[3] = (int8_t)((collumn >> 8) & 0xFF);
 		shift_out();
+		return;
 	}
-	if(!strcmp(command, "reset")){
+	if(!strcmp(command, "pong")){
+		uart_puts("starting pong\n");
+		pong_run();
+		return;
+	}if(!strcmp(command, "reset")){
 		uart_puts("resetting...\n");
 		__asm("rjmp 0x0000");
+		return;
 	}
 
 	if(!strcmp(command, "help")){
 		uart_puts("\navailable commands:"
-				"\n\tsetpixels\t\tset all pixels\n"
-				"\n\tclearpixels\t\tclear all pixels\n"
-				"n\treset\t\treset the controller\n");
+			"\n\tsetpixels\t\tset all pixels"
+			"\n\tpong\t\tstart the pong game"
+			"\n\tclearpixels\t\tclear all pixels"
+			"\n\treset\t\treset the controller");
+		return;
 	}
+	uart_puts("unknown cmd\n");
 }
 
 char *get_nxt_word(char *str, char* word)
 {
 	int index;
-	for(index = 0;*(str+sizeof(char)*index) != 0x00 && *(str+sizeof(char)*index) != ' ' && index < MAX_CMD_LENGTH; index += sizeof(char)){
+	for(index = 0;*(str+sizeof(char)*index) != 0x00 && 
+		*(str+sizeof(char)*index) != ' ' && 
+			index < MAX_CMD_LENGTH; index += sizeof(char)) {
 		word[index] = *(str+sizeof(char)*index);
 	}
 	word[index] = 0x00;
@@ -131,5 +147,4 @@ int strcmp(char *str1, char *str2)
 	}
 	return 1;
 }
-
 
