@@ -17,13 +17,11 @@ ISR (TIMER2_COMP_vect)
 	register_state[LINE_REG2] = 
 		crrnt_fb[((crrnt_collumn*SIZE_Y)/8)+1];
 	if(crrnt_collumn < 8){
-		register_state[COLLUMN_REG1] = 
-			~((int8_t)(0x01 << crrnt_collumn));
+		register_state[COLLUMN_REG1] = ~(0x01 << crrnt_collumn);
 		register_state[COLLUMN_REG2] = ~0x00;
 	}
 	else{
-		register_state[COLLUMN_REG2] = 
-			~((int8_t)(0x01 << (crrnt_collumn-8)));
+		register_state[COLLUMN_REG2] = 	~(0x01 << (crrnt_collumn-8));
 		register_state[COLLUMN_REG1] = ~0x00;	
 	}
 	shift_out();	
@@ -58,30 +56,69 @@ void led_matrix_init()
 
 void led_matrix_set_pixel(uint8_t x, uint8_t y, uint8_t val)
 {
+	led_matrix_set_pixel_fb(x, y, val, crrnt_fb);
+}
+
+void led_matrix_set_pixel_fb(uint8_t x, uint8_t y, uint8_t val, int8_t * custom_fb)
+{
 	int8_t xtmp = x%8;
 
 	if(x >= SIZE_X || y >= SIZE_Y){
 		return;
 	}
+ 
+
+// Workaround for hardware bug. I soldered it the wrong way...	
+	if(y%2){
+		y-=1;
+	}else {
+		y+=1;
+	}
+
+	if(x%2){
+		xtmp-=1;
+	}else {
+		xtmp+=1;
+	}
 	
 	if(val == 1){
-		crrnt_fb[((SIZE_Y*y)+x)/8] |= (1<<xtmp); // set
+		custom_fb[((SIZE_Y*y)+x)/8] |= (1<<xtmp); // set
 	}
 	else{
-		crrnt_fb[((SIZE_Y*y)+x)/8] &= ~(1<<xtmp); //clear
+		custom_fb[((SIZE_Y*y)+x)/8] &= ~(1<<xtmp); //clear
 		
 	} 	
+
 }
 
+
 uint8_t led_matrix_get_pixel(uint8_t x, uint8_t y)
+{
+	return led_matrix_get_pixel_fb(x,y, crrnt_fb);
+}
+
+uint8_t led_matrix_get_pixel_fb(uint8_t x, uint8_t y, int8_t * custom_fb)
 {
 	uint8_t xtmp = x%8;
 
 	if(x >= SIZE_X || y >= SIZE_Y){
 		return 0;
 	}
-	
-	if(crrnt_fb[((SIZE_Y*y)+x)/8] & (1<<xtmp))
+
+// Workaround for hardware bug. I soldered it the wrong way...	
+	if(y%2){
+		y-=1;
+	}else {
+		y+=1;
+	}
+
+	if(x%2){
+		xtmp-=1;
+	}else {
+		xtmp+=1;
+	}
+
+	if(custom_fb[((SIZE_Y*y)+x)/8] & (1<<xtmp))
 		return 1;
 	return 0;
 }
@@ -93,6 +130,7 @@ int8_t * led_matrix_set_fb(int8_t * new_fb)
 	crrnt_fb = new_fb;
 	return ret;
 }
+
 
 void reset_fb()
 {

@@ -5,7 +5,7 @@ static int8_t * new_fb;
 
 uint8_t is_alive(uint8_t x, uint8_t y)
 {
-	return led_matrix_get_pixel( x, y);
+	return led_matrix_get_pixel_fb(x,y, old_fb);
 }
 
 #define is_dead(x,y)	(!(is_alive((x),(y))))
@@ -62,9 +62,6 @@ static uint8_t living_neighbors(uint8_t x, uint8_t y)
 		}
 	}
 	
-	if(neighbors > 7) {
-		uart_puts("neighbors > 7\n");
-	}
 	return neighbors;
 }
 
@@ -73,12 +70,12 @@ static uint8_t living_neighbors(uint8_t x, uint8_t y)
 
 void set_alive(uint8_t x, uint8_t y)
 {
-	new_fb[((SIZE_Y*y)+x)/8] |= (1<<(x%8)); // set
+	led_matrix_set_pixel_fb(x,y, 1,new_fb);
 }
 
 void set_dead(uint8_t x, uint8_t y)
 {
-	new_fb[((SIZE_Y*y)+x)/8] &= ~(1<<(x%8)); //clear
+	led_matrix_set_pixel_fb(x,y, 0,new_fb);
 }
 
 void conway_run(int8_t *start_pic)
@@ -87,11 +84,23 @@ void conway_run(int8_t *start_pic)
 	new_fb = led_matrix_set_fb(old_fb);
 	uint8_t	changed = 1; // first time anyway
 
-	for(int i = 0; i < SIZE_X; i++){
-		led_matrix_set_pixel(i,i,1);
-	}
-	for(int i = 0; i < 100; i++)
-		_delay_ms(20);
+	led_matrix_set_pixel(8,4,1);
+	led_matrix_set_pixel(8,5,1);
+	led_matrix_set_pixel(8,6,1);
+
+		
+	led_matrix_set_pixel(7,5,1);
+	led_matrix_set_pixel(7,11,1);
+
+	led_matrix_set_pixel(8,10,1);
+	led_matrix_set_pixel(8,11,1);
+	led_matrix_set_pixel(8,12,1);
+	/*for(int i = 5; i < 12; i++){
+		led_matrix_set_pixel(8,i,1);
+		for(int j = 0; j < 100; j++)
+			_delay_ms(1);
+	}*/
+
 
 	app_reset_tick();
 	app_start_tick();
@@ -106,14 +115,12 @@ void conway_run(int8_t *start_pic)
 			for(uint8_t y = 0; y < SIZE_Y; y ++) {
 				uint8_t neighbors = living_neighbors(x,y);
 				if(neighbors == 3) {
-					uart_puts("has 3 neighbors\n");
 					if(is_dead(x,y)) {
 						changed = 1;
 					}
 					set_alive(x,y);
 				}else if(neighbors == 2) {
 					if(is_alive(x,y)) {
-						uart_puts("has_2 neighbors and is alive\n");
 						set_alive(x,y);
 					}else{
 						set_dead(x,y);
@@ -122,11 +129,6 @@ void conway_run(int8_t *start_pic)
 					
 					if(is_alive(x,y)) {
 						changed = 1;
-						if(neighbors == 1) {
-							uart_puts("neighbors = 1, is alive\n");
-						}else if(neighbors == 0){
-							uart_puts("not 1 and not 0 but alive");
-						}
 					}
 					set_dead(x,y);
 				}
@@ -143,7 +145,7 @@ void conway_run(int8_t *start_pic)
 			uart_puts("waiting\n");
 			_delay_ms(10);
 			}*/
-		for(int k = 0; k < 100; k++) {
+		for(int k = 0; k < 50; k++) {
 			_delay_ms(10);
 			asm volatile("nop");
 		}
