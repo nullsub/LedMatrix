@@ -4,6 +4,7 @@
 #include "shift_register.h"
 #include <stdlib.h>
 #include <inttypes.h>
+#include "apps.h"
 
 void parse_cmd(char *cmd);
 int strcmp(char *str1, char *str2);
@@ -11,12 +12,36 @@ char *get_nxt_word(char *str, char* word);
 
 #define MAX_CMD_LENGTH 40
 
+
+int8_t conway[32] ={
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+		0x00,0x00,
+};
+
 int main(){
 	char tmp;
 	char cmd_bffr[MAX_CMD_LENGTH];
 	int i = 0;
+
+/* Init subsystems */
 	uart_init();
 	led_matrix_init();
+	app_init();
+
 	uart_puts("all initialized\n$");
 	while(1){
 		tmp = uart_getc();
@@ -25,7 +50,7 @@ int main(){
 			if(tmp == '\b'){
 				if(i > 0){
 					i--;
-					//uart_putc('\b');
+					uart_puts(" \b");
 				}
 			}
 			else if(tmp == '\n'|| tmp == '\r' ||
@@ -82,6 +107,9 @@ void parse_cmd(char *cmd)
 				led_matrix_set_pixel(j,i,0);
 			}
 		}
+		return;
+	}if(!strcmp(command, "conway")){
+		conway_run(conway);
 		return;
 	}if(!strcmp(command, "setpixels")){
 		for(unsigned int i = 0; i < SIZE_Y; i++) {
