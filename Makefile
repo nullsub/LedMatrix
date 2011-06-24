@@ -71,7 +71,7 @@ build/%.o : %.asm
 	$(CC) -c $(CFLAGS) $(INCLUDES) -O2 $< -o $@
 
 flash: all
-	avrdude -c avrisp2 -p m8 -P usb -F -v -B10 -U flash:w:build/Matrix16x16.hex:a	
+	avrdude -c avrisp2 -p m8 -P usb -F -v -V -B10 -U flash:w:build/Matrix16x16.hex:a	
 
 ## Clean target
 clean:
