@@ -1,6 +1,3 @@
-#ifndef UART_C
-#define UART_C 
-
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "uart.h"
@@ -12,7 +9,8 @@ static char * current_read;
 static int fifo_cnt;
 static void  uart_write_fifo(char data);
 
-void uart_init(){
+void uart_init()
+{
 	UBRRH = UBRR_VAL >> 8; // set baud-rate
 	UBRRL = UBRR_VAL & 0xFF;//set baud-rate
 
@@ -28,9 +26,9 @@ void uart_init(){
 	return;
 }
 
-static void  uart_write_fifo(char data){ // write data to the circular buffer
+static void  uart_write_fifo(char data)
+{
 	if(fifo_cnt < RECIEVE_BUFFER_SIZE - 2) {
-
 		if(current_write == (&r_buffer[0] + RECIEVE_BUFFER_SIZE)) {
 			current_write = &r_buffer[0];
 		}
@@ -40,28 +38,25 @@ static void  uart_write_fifo(char data){ // write data to the circular buffer
 		}
 
 		fifo_cnt++;
-	}
-	else{	
+	} else{	
 		uart_putc('F');	
 		uart_putc('U');
 		uart_putc('L');
 		uart_putc('L');
 		uart_putc('\n');
 		uart_putc('\r');
-
 	}
 
 }
-/* Zeichen empfangen */
+
 unsigned char uart_getc(void) // fetch charackter from rinbuffer
 {	unsigned char data = 0x00;
-	if(fifo_cnt == 0){	
+	if(fifo_cnt == 0) {	
 		return 0;
 	}
-	if(current_read == (&r_buffer[0] + RECIEVE_BUFFER_SIZE)){
+	if(current_read == (&r_buffer[0] + RECIEVE_BUFFER_SIZE)) {
 		current_read = &r_buffer[0];
-	}
-	else{
+	} else{
 		data = *current_read;
 		current_read ++;
 	}
@@ -69,12 +64,14 @@ unsigned char uart_getc(void) // fetch charackter from rinbuffer
 	return data;
 }
 
-void uart_putc(char data){
+void uart_putc(char data)
+{
 	while (!(UCSRA & (1<<UDRE)));  /* warten bis Senden moeglich                   */
 	UDR = data;
 }
 
-void uart_puts(char * data){
+void uart_puts(char * data)
+{
 	while(*data) {
 		uart_putc(*data);
 		data++;
@@ -87,5 +84,3 @@ ISR(USART_RXC_vect){
 	uart_write_fifo(UDR);	
 }
 
-
-#endif //UART_C

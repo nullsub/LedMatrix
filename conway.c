@@ -61,21 +61,17 @@ static uint8_t living_neighbors(uint8_t x, uint8_t y)
 			neighbors ++;
 		}
 	}
-	
 	return neighbors;
 }
 
-
-
-
 void set_alive(uint8_t x, uint8_t y)
 {
-	led_matrix_set_pixel_fb(x,y, 1,new_fb);
+	led_matrix_set_pixel_fb(x, y, 1, new_fb);
 }
 
 void set_dead(uint8_t x, uint8_t y)
 {
-	led_matrix_set_pixel_fb(x,y, 0,new_fb);
+	led_matrix_set_pixel_fb(x, y, 0, new_fb);
 }
 
 void conway_run(int8_t *start_pic)
@@ -84,23 +80,17 @@ void conway_run(int8_t *start_pic)
 	new_fb = led_matrix_set_fb(old_fb);
 	uint8_t	changed = 1; // first time anyway
 
-	led_matrix_set_pixel(8,4,1);
-	led_matrix_set_pixel(8,5,1);
-	led_matrix_set_pixel(8,6,1);
+	led_matrix_set_pixel(8, 4, 1);
+	led_matrix_set_pixel(8, 5, 1);
+	led_matrix_set_pixel(8, 6, 1);
 
 		
-	led_matrix_set_pixel(7,5,1);
-	led_matrix_set_pixel(7,11,1);
+	led_matrix_set_pixel(7, 5, 1);
+	led_matrix_set_pixel(7, 11, 1);
 
-	led_matrix_set_pixel(8,10,1);
-	led_matrix_set_pixel(8,11,1);
-	led_matrix_set_pixel(8,12,1);
-	/*for(int i = 5; i < 12; i++){
-		led_matrix_set_pixel(8,i,1);
-		for(int j = 0; j < 100; j++)
-			_delay_ms(1);
-	}*/
-
+	led_matrix_set_pixel(8, 10, 1);
+	led_matrix_set_pixel(8, 11, 1);
+	led_matrix_set_pixel(8, 12, 1);
 
 	app_reset_tick();
 	app_start_tick();
@@ -147,10 +137,10 @@ void conway_run(int8_t *start_pic)
 			}*/
 		for(int k = 0; k < 50; k++) {
 			_delay_ms(10);
-			asm volatile("nop");
 		}
 		app_dec_tick();
 		old_fb = new_fb;
 		new_fb = led_matrix_set_fb(new_fb);
 	}
 }
+

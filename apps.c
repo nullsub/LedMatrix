@@ -8,7 +8,6 @@ static volatile uint8_t tick;
 void app_init()
 {
  	 // Use 16 Bit Timer1 to create a tick every 100ms
-
   	TCCR1B = (1<<WGM12); 
 
 /*		((NeededTime/(1/F_CPU))/PRESCALER)-1 	*/
@@ -18,7 +17,7 @@ void app_init()
 	TCNT1 = 0; //16bit register
  	TIMSK |= (1<<OCIE1A); // enable INT
 
-	/* The Timer still needs to be started! (app_start_tick())*/
+	/* The Timer still needs to be started with app_start_tick()*/
 	tick = 0;		
 }
 

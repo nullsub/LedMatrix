@@ -59,7 +59,7 @@ build/$(TARGET).elf: $(OFILES)
 	avr-objcopy -O ihex $(HEX_FLASH_FLAGS) build/$(TARGET).elf build/$(TARGET).hex
 	avr-objcopy $(HEX_EEPROM_FLAGS) -O ihex build/$(TARGET).elf build/$(TARGET).eep
 	avr-objdump -d -S build/$(TARGET).elf >  build/$(TARGET).lss
-	@avr-size -C --mcu=${MCU} build/$(TARGET).elf
+	@avr-size build/$(TARGET).elf
 
 build/%.o : %.c
 	$(CC) -c $(CFLAGS) $(INCLUDES) -Os $< -o $@
@@ -77,5 +77,6 @@ flash: all
 clean:
 	rm -rf build/*
 
-
+# Create output files directory
+$(shell mkdir -p build)
 

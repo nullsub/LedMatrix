@@ -1,4 +1,3 @@
-
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
@@ -7,7 +6,6 @@
 
 static int8_t main_fb[(SIZE_X * SIZE_Y)/8];
 static int8_t * crrnt_fb;
-
 
 ISR (TIMER2_COMP_vect)
 {
@@ -28,7 +26,6 @@ ISR (TIMER2_COMP_vect)
 	crrnt_collumn ++;
 	if(crrnt_collumn >= 16) 
 		crrnt_collumn = 0;
-//	__asm("wdr"); // reset watchdog
 }
 
 
@@ -44,11 +41,6 @@ void led_matrix_init()
 	OCR2 = 77;  // (NeededTime/(1/F_CPU))/PRESCALER 
 	TIMSK |= (1<<OCIE2); 
 
- 
-  /*	// Global Interrupts aktivieren
-	WDTCR |= (1<<WDCE)|(1<<WDE);
-	WDTCR |= (1<<WDP0)|(1<<WDP1)|(1<<WDE); //enable watchdog approximatily every 12ms
-*/
 	crrnt_fb = main_fb; 
   	sei();
 }
@@ -67,7 +59,6 @@ void led_matrix_set_pixel_fb(uint8_t x, uint8_t y, uint8_t val, int8_t * custom_
 		return;
 	}
  
-
 // Workaround for hardware bug. I soldered it the wrong way...	
 	if(y%2){
 		y-=1;

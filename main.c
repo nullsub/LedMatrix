@@ -1,4 +1,3 @@
-
 #include "uart.h"
 #include "led_matrix.h"
 #include "shift_register.h"
@@ -11,7 +10,6 @@ int strcmp(char *str1, char *str2);
 char *get_nxt_word(char *str, char* word);
 
 #define MAX_CMD_LENGTH 40
-
 
 int8_t conway[32] ={
 		0x00,0x00,
@@ -69,7 +67,6 @@ int main(){
 			}
 		}
 	}
-	uart_puts("\nshouldn be here\n");
 }
 
 
