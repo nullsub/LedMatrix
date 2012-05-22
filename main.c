@@ -111,23 +111,23 @@ void parse_cmd(char *cmd)
 	}if(!strcmp(command, "setpixels")){
 		for(unsigned int i = 0; i < SIZE_Y; i++) {
 			for(unsigned int j = 0; j < SIZE_X; j++) {
-				led_matrix_set_pixel(j,i,1);
+				led_matrix_set_pixel(j, i, 1);
 			}
 		}
 		return;
 	}
-
 	if(!strcmp(command, "set")){
-		uart_puts("cmd set <line> <column>:\n");
 		int line = atoi(an_arg);
 		arg_pointer = get_nxt_word(arg_pointer, an_arg);
 		int collumn = atoi(an_arg);
-		register_state[0] = (int8_t) (line & 0xFF);
-		register_state[1] = (int8_t)((line >> 8) & 0xFF);
-
-		register_state[2] = (int8_t) (collumn & 0xFF);
-		register_state[3] = (int8_t)((collumn >> 8) & 0xFF);
-		shift_out();
+		led_matrix_set_pixel(line, collumn, 1);
+		return;
+	}	
+	if(!strcmp(command, "clear")){
+		int line = atoi(an_arg);
+		arg_pointer = get_nxt_word(arg_pointer, an_arg);
+		int collumn = atoi(an_arg);
+		led_matrix_set_pixel(line, collumn, 0);
 		return;
 	}
 	if(!strcmp(command, "pong")){
@@ -143,6 +143,8 @@ void parse_cmd(char *cmd)
 	if(!strcmp(command, "help")){
 		uart_puts("\navailable commands:"
 			"\n\tsetpixels\t\tset all pixels"
+			"\n\tset <line> <collumn>\t\tset specific pixel"
+			"\n\tclear <line <collumn>\t\tclear specific pixels"
 			"\n\tpong\t\tstart the pong game"
 			"\n\tclearpixels\t\tclear all pixels"
 			"\n\treset\t\treset the controller");
