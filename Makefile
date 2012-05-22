@@ -13,7 +13,7 @@ COMMON = -mmcu=$(MCU)
 
 ## Compile options common for all C compilation units.
 CFLAGS += $(COMMON)
-CFLAGS += -Wall -gdwarf-2 -std=gnu99 -DF_CPU=8000000UL -O3 -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
+CFLAGS += -Wall -gdwarf-2 -std=gnu99 -DF_CPU=8000000UL -O2 -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 
 ## Assembly specific flags
 ASMFLAGS = $(COMMON)
@@ -62,13 +62,13 @@ build/$(TARGET).elf: $(OFILES)
 	@avr-size build/$(TARGET).elf
 
 build/%.o : %.c
-	$(CC) -c $(CFLAGS) $(INCLUDES) -Os $< -o $@
+	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
 
 build/%.o : %.S 
-	$(CC) -c $(CFLAGS) $(INCLUDES) -O2 $< -o $@
+	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
 
 build/%.o : %.asm 
-	$(CC) -c $(CFLAGS) $(INCLUDES) -O2 $< -o $@
+	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
 
 flash: all
 	avrdude -c avrisp2 -p m8 -P usb -F -v -V -B10 -U flash:w:build/Matrix16x16.hex:a	
