@@ -43,7 +43,7 @@ int port_open(void)
 		perror("serial_init: Could not get term attributes\n");
 		return -1;
 	}
-	int baud = 115200;
+	int baud = 9600;
 	speed_t baud_rate = baud;
 	switch(baud) {
 	case 4800: baud_rate=B4800; break;

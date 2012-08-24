@@ -9,16 +9,6 @@
 #include "output.h"
 #include "uart_communication.h"
 
-/*
-static void imon_handle_events(pa_mainloop_api *api, pa_io_event *e,
-        int fd, pa_io_event_flags_t events, void *nill)
-{
-	return;
-    struct timeval tv;
-    memset(&tv, 0, sizeof(tv));
-    libusb_handle_events_timeout(context, &tv);
-}
-*/
 int imon_open()
 {
 	port_open();

@@ -78,9 +78,8 @@ void uart_puts(char * data)
 	}
 }
 
-
-
-ISR(USART_RXC_vect){
+ISR(USART_RXC_vect)
+{
 	uart_write_fifo(UDR);	
 }
 
