@@ -11,10 +11,10 @@
 
 int imon_open()
 {
-	port_open();
+	return port_open();
 }
 
-void imon_close(pa_mainloop_api *api)
+void imon_close()
 {
 	port_close();	
 }

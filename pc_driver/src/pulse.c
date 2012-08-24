@@ -325,7 +325,7 @@ static void signal_exit(pa_mainloop_api *api, pa_signal_event *e,
 int main(int argc, char * argv[])
 {
     pa_mainloop *mainloop = NULL;
-    int r, ret = 1;
+    int ret = 1;
 
     display_init();
 
@@ -342,10 +342,10 @@ int main(int argc, char * argv[])
     if (context_setup())
         goto finish;
 
-    if ((r = imon_open())) {
-        fprintf(stderr, "Failed to open iMON display: %s\n", strerror(r));
+    if (imon_open() < 0) {
+        fprintf(stderr, "Failed to open device\n");
         goto finish;
-    }
+    }    
 
     pa_mainloop_run(mainloop, &ret);
     imon_close();
