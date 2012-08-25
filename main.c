@@ -100,10 +100,10 @@ void parse_cmd(char *cmd)
 
 	if(!strcmp(command, "m")){ //vumeter: m <val1> <val2> .... <val16>
 		for(int i = 0; i < 16; i++) {
-			int level = atoi(an_arg);
+			int level = 16 - atoi(an_arg);
 			arg_pointer = get_nxt_word(arg_pointer, an_arg);
-			for(int j = 0; j < 16; j++) {
-				if(j < level) {
+			for(int j = 16; j >= 0; j--) {
+				if(j > level) {
 					led_matrix_set_pixel(i, j, 1);
 				} else {
 					led_matrix_set_pixel(i, j, 0);
