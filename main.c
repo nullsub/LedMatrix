@@ -9,7 +9,7 @@ void parse_cmd(char *cmd);
 int strcmp(char *str1, char *str2);
 char *get_nxt_word(char *str, char* word);
 
-#define MAX_CMD_LENGTH 40
+#define MAX_CMD_LENGTH 65
 
 int8_t conway[32] ={
 		0x00,0x00,
@@ -36,13 +36,13 @@ int main(){
 	int i = 0;
 
 /* Init subsystems */
-	uart_init();
 	led_matrix_init();
+	uart_init();
 	app_init();
 
 	uart_puts("all initialized\n$");
 	while(1){
-		tmp = uart_getc();
+		tmp = uart_getc(); //blocking
 		if(tmp != 0x00){
 			uart_putc(tmp);
 			if(tmp == '\b'){
@@ -98,6 +98,20 @@ void parse_cmd(char *cmd)
 
 	arg_pointer = get_nxt_word(args+1, an_arg);	
 
+	if(!strcmp(command, "m")){ //vumeter: m <val1> <val2> .... <val16>
+		for(int i = 0; i < 16; i++) {
+			int level = atoi(an_arg);
+			arg_pointer = get_nxt_word(arg_pointer, an_arg);
+			for(int j = 0; j < 16; j++) {
+				if(j < level) {
+					led_matrix_set_pixel(i, j, 1);
+				} else {
+					led_matrix_set_pixel(i, j, 0);
+				}
+			}
+		}
+		return;
+	}	
 	if(!strcmp(command, "clearpixels")){
 		for(unsigned int i = 0; i < SIZE_Y; i++) {
 			for(unsigned int j = 0; j < SIZE_X; j++) {
@@ -122,7 +136,8 @@ void parse_cmd(char *cmd)
 		int collumn = atoi(an_arg);
 		led_matrix_set_pixel(line, collumn, 1);
 		return;
-	}	
+	}		
+
 	if(!strcmp(command, "clear")){
 		int line = atoi(an_arg);
 		arg_pointer = get_nxt_word(arg_pointer, an_arg);

@@ -6,7 +6,7 @@ static char r_buffer[RECIEVE_BUFFER_SIZE]; // the recieve buffer
 static char * current_write;
 static char * current_read;
 
-static int fifo_cnt;
+static volatile int fifo_cnt;
 static void  uart_write_fifo(char data);
 
 void uart_init()
@@ -49,10 +49,11 @@ static void  uart_write_fifo(char data)
 
 }
 
-unsigned char uart_getc(void) // fetch charackter from rinbuffer
-{	unsigned char data = 0x00;
-	if(fifo_cnt == 0) {	
-		return 0;
+unsigned char uart_getc(void) // fetch charackter from rinbuffer Blocking
+{
+	unsigned char data = 0x00;
+	while (fifo_cnt == 0) { //block until data is avail.
+		__asm("nop");
 	}
 	if(current_read == (&r_buffer[0] + RECIEVE_BUFFER_SIZE)) {
 		current_read = &r_buffer[0];

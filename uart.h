@@ -1,12 +1,13 @@
 #ifndef UART_H
 #define UART_H
 
-#define RECIEVE_BUFFER_SIZE 99
+#define RECIEVE_BUFFER_SIZE 128
 
 void uart_init();
 unsigned char uart_getc();
 void uart_putc(char data);
 void uart_puts(char * data);
+unsigned char uart_get_byte_block(void); // fetch charackter from rinbuffer
 
 #ifndef F_CPU
 #error "F_CPU is not defined"

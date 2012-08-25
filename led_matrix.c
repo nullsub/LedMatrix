@@ -28,7 +28,6 @@ ISR (TIMER2_COMP_vect)
 		crrnt_collumn = 0;
 }
 
-
 void led_matrix_init()
 {
 	shift_init();
@@ -79,7 +78,6 @@ void led_matrix_set_pixel_fb(uint8_t x, uint8_t y, uint8_t val, int8_t * custom_
 		custom_fb[((SIZE_Y*y)+x)/8] &= ~(1<<xtmp); //clear
 		
 	} 	
-
 }
 
 

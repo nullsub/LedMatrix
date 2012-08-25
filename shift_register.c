@@ -26,7 +26,7 @@ void shift_out()
 			out_byte  = (out_byte  <<  1); 
 
 			SHIFT_PORT |= (1<<SHIFT_SCK); 
-			__asm("nop");
+			//__asm("nop"); //works without aswell
 			SHIFT_PORT &= ~(1<<SHIFT_SCK);;
 		}	
 	}
