@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS  = -g -Wall -O2 -std=gnu99 -Isrc 
 CFLAGS += $(shell pkg-config fftw3f --cflags)
 CFLAGS += $(shell pkg-config libpulse --cflags)
-LIBS  = -lrt -pthread
+LIBS  = -lrt -pthread -lfftw3
 LIBS += $(shell pkg-config fftw3f --libs)
 LIBS += $(shell pkg-config libpulse --libs)
 
